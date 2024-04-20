@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    container_name: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${DB_USER} -d $${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # для возможности загрузить данные в базу извне
+    ports:
+      - "127.0.0.1:5432:5432"
+    env_file: .env
+
+  service:
+    build: .
+    image: app_django
+    restart: always
+    volumes:
+      - ./movies_app/static:/opt/app/movies_app/static/
+      - ./movies_app/media:/opt/app/movies_app/media/
+    ports:
+      # тесты Postman Yandex Practicum смотрят на 8000 порт, поэтому убрать его не могу
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+
+  nginx:
+    image: nginx:1.25.4
+    restart: always
+    volumes:
+      - ./movies_app/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./movies_app/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./movies_app/static:/app/static/
+      - ./movies_app/media:/app/media/
+    depends_on:
+      - service
+    ports:
+      - "80:80"

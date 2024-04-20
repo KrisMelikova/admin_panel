@@ -1,3 +1,73 @@
-# Заключительное задание первого модуля
+## API для кинотеатра 
+### возвращает список фильмов в формате, описанном в openapi-файле, и позволяющий получить информацию об одном фильме
 
-Ваша задача в этом уроке — загрузить данные в Elasticsearch из PostgreSQL. Подробности задания в папке `etl`.
+____________________________________________________________________________
+Как запустить проект и проверить его работу:
+____________________________________________________________________________
+
+Активация виртуального окружения
+```
+source venv/bin/activate
+```
+
+Запуск приложения с docker compose:
+```
+docker-compose up
+```
+
+Приложение будет доступно по адресу:
+```
+http://127.0.0.1:80
+```
+
+Админка:
+```
+http://127.0.0.1:80/admin
+```
+
+Генерация superuser, чтобы войти в админку:
+```
+1) docker ps
+2) docker exec -it <django app container id> bash
+3) cd movies_app
+4) python manage.py createsuperuser
+```
+
+Заполнение базы данными:
+```
+1) Меняем в .env значение переменной DB_HOST на 'localhost' (текущее значение: DB_HOST='postgres')
+2) cd sqlite_to_postgres
+3) python load_data.py
+```
+____________________________________________________________________________
+Часть, которая будет актуальна при разработке и отладке:
+____________________________________________________________________________
+
+Установка зависимостей
+```
+pip3 install -r requirements.txt
+```
+
+Запуск отладочного сервера:
+```
+python manage.py runserver <port>
+python manage.py migrate
+python3 load_data.py (см. sqlite_to_postgres папку)
+```
+
+Вход в интерактивный интерпретатор
+```
+python manage.py shell
+```
+Docker:
+```
+docker build -t django_api .
+docker run -p 8000:8000 --rm --name django django_api
+```
+
+Для отладки c docker compose могут пригодиться:
+```
+docker-compose down
+docker-compose build
+docker exec -it <container id> bash
+```
