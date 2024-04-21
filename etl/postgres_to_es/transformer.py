@@ -1,4 +1,5 @@
-from typing import Callable, Tuple, List, Any
+import pdb
+from typing import Callable, Any, Optional, List
 
 from psycopg2.extras import RealDictRow
 from pydantic import BaseModel
@@ -11,15 +12,16 @@ class Person(BaseModel):
 
 class Filmwork(BaseModel):
     id: str
-    title: str | None
-    description: str | None
-    imdb_rating: float | None
-    genre: list[str]
-    director: list[str]
-    writers_names: list[str]
-    writers: list[Person]
-    actors_names: list[str]
-    actors: list[Person]
+    title: str
+    description: Optional[str]
+    imdb_rating: Optional[float]
+    genres: List[str | None]
+    directors_names: List[str] = []
+    directors: Optional[List[Person]]
+    writers_names: List[str]
+    writers: Optional[List[Person]]
+    actors_names: List[str]
+    actors: Optional[List[Person]]
 
 
 class Transformer:
@@ -35,7 +37,7 @@ class Transformer:
 
         transformed_filmworks = []
         for filmwork in filmworks_query_result:
-            director = self.collect_director_data(filmwork)
+            directors, directors_names = self.collect_directors_data(filmwork)
             actors, actors_names = self.collect_actors_data(filmwork)
             writers, writer_names = self.collect_writers_data(filmwork)
 
@@ -44,8 +46,9 @@ class Transformer:
                 title=filmwork["title"],
                 description=filmwork["description"],
                 imdb_rating=filmwork["rating"],
-                genre=filmwork["genres"],
-                director=director,
+                genres=filmwork["genres"],
+                director_names=directors_names,
+                directors=directors,
                 writers_names=writer_names,
                 writers=writers,
                 actors_names=actors_names,
@@ -57,10 +60,20 @@ class Transformer:
         self.result_handler(transformed_filmworks)
 
     @staticmethod
-    def collect_director_data(filmwork: RealDictRow) -> list:
+    def collect_directors_data(filmwork: RealDictRow) -> tuple[list[Person], list[Any]]:
         """ Collect data about directors. """
 
-        return [person["person_name"] for person in filmwork["persons"] if person["person_role"] == "director"]
+        directors = []
+        directors_names = []
+        for person in filmwork["persons"]:
+            if person["person_role"] == "director":
+                directors_names.append(person["person_name"])
+                directors.append(Person(
+                    id=person["person_id"],
+                    name=person["person_name"]
+                ))
+
+        return directors, directors_names
 
     @staticmethod
     def collect_actors_data(filmwork: RealDictRow) -> tuple[list[Person], list[Any]]:
