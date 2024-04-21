@@ -43,9 +43,7 @@ def run_data_transfer_from_pg_to_es() -> None:
         result_handler=transformer.transform_filmworks,
     )
 
-    extractor.proccess(
-        table="film_work", schema="content", page_size=settings.page_size, updated_at=updated_at,
-    )
+    extractor.proccess(table="film_work", schema="content", page_size=settings.page_size, updated_at=updated_at)
 
 
 if __name__ == "__main__":

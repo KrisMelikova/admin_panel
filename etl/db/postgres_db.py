@@ -16,7 +16,7 @@ class PostgresConnection(object):
         self.connection = psycopg2.connect(**self.postgres_settings)
         self.connection.set_session(readonly=True)
 
-        etl_logger.info(f"Connection to the database {self.postgres_settings['dbname']} is established.")
+        etl_logger.info(f"Connection to the database '{self.postgres_settings['dbname']}' is established.")
 
     def __init__(self, postgres_settings: dict) -> None:
         """ Postgres connection constructor. """

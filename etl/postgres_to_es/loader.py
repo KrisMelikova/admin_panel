@@ -1,4 +1,4 @@
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
 
 from etl.configs.logger import etl_logger
 
@@ -20,7 +20,35 @@ class Loader(object):
 
         self.es.indices.create(index=index, body=index_schema)
 
-    def proccess(self, data: dict) -> None:
+    def process(self, movies_data: dict) -> None:
         """ Load data to Elasticsearch. """
 
-        import pdb;pdb.set_trace()
+        etl_logger.info(f"Adding {len(movies_data)} movies to ES.")
+
+        actions = [
+            {
+                "_index": self.index,
+                "_id": el.id,
+                "_source": el.dict()
+            }
+            for el in movies_data
+        ]
+
+
+        _, errors = helpers.bulk(self.es, actions, stats_only=False)
+
+        res = self.es.search(index="movies", body={
+            'size': 100,
+            'query': {
+                'match_all': {}
+            }
+        })
+
+        #
+        #
+        # data_w_bulk_format = list(map(self.convert_to_bulk_format, movies_data))
+        #
+        # _, errors = helpers.bulk(self.es, data_w_bulk_format, stats_only=False)
+
+        import pdb;
+        pdb.set_trace()

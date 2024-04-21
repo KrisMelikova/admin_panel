@@ -48,7 +48,7 @@ movies = {
             "imdb_rating": {
                 "type": "float"
             },
-            "genre": {
+            "genres": {
                 "type": "keyword"
             },
             "title": {
@@ -64,7 +64,7 @@ movies = {
                 "type": "text",
                 "analyzer": "ru_en"
             },
-            "director": {
+            "directors_names": {
                 "type": "text",
                 "analyzer": "ru_en"
             },
@@ -75,6 +75,19 @@ movies = {
             "writers_names": {
                 "type": "text",
                 "analyzer": "ru_en"
+            },
+            "directors": {
+                "type": "nested",
+                "dynamic": "strict",
+                "properties": {
+                    "id": {
+                        "type": "keyword"
+                    },
+                    "name": {
+                        "type": "text",
+                        "analyzer": "ru_en"
+                    }
+                }
             },
             "actors": {
                 "type": "nested",
