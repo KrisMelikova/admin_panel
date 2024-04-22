@@ -2,13 +2,13 @@ import time
 
 from elasticsearch import Elasticsearch
 
-from etl.configs.etl_config import settings
-from etl.configs.logger import etl_logger
-from etl.db.postgres_db import PostgresConnection
-from etl.postgres_to_es.extractor import Extractor
-from etl.postgres_to_es.loader import Loader
-from etl.postgres_to_es.transformer import Transformer
-from etl.storage.state_storage import JsonFileStorage, State
+from configs.etl_config import settings
+from configs.logger import etl_logger
+from db.postgres_db import PostgresConnection
+from postgres_to_es.extractor import Extractor
+from postgres_to_es.loader import Loader
+from postgres_to_es.transformer import Transformer
+from storage.state_storage import JsonFileStorage, State
 
 PG_CONNECTION = PostgresConnection(settings.postgres.dict())
 ES_CONNECTION = Elasticsearch(settings.es.connection.host)

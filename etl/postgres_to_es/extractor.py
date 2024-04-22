@@ -3,11 +3,11 @@ from typing import Callable
 
 from psycopg2.sql import SQL, Identifier
 
-from etl.configs.etl_config import settings
-from etl.configs.logger import etl_logger
-from etl.db.postgres_db import PostgresConnection
-from etl.db.queries import QueryGenerator
-from etl.storage.state_storage import JsonFileStorage, State
+from configs.etl_config import settings
+from configs.logger import etl_logger
+from db.postgres_db import PostgresConnection
+from db.queries import QueryGenerator
+from storage.state_storage import JsonFileStorage, State
 
 
 class Extractor(object):
@@ -23,7 +23,7 @@ class Extractor(object):
 
     @staticmethod
     def _extract_record_ids(query_result: list) -> set:
-        return set(el['id'] for el in query_result)
+        return {el['id'] for el in query_result}
 
     def proccess(self, table: str, schema: str, page_size: int, updated_at: str) -> None:
         """ Get information about modified filmworks."""
@@ -31,6 +31,7 @@ class Extractor(object):
         filmwork_ids = set()
         query_generator = QueryGenerator(schema, updated_at)
 
+        # work with persons
         persons_query = query_generator.generate_persons_query()
         prepared_persons_query = SQL(persons_query).format(table=Identifier(schema, table))
 
@@ -45,6 +46,7 @@ class Extractor(object):
             filmwork_person_ids = self._extract_record_ids(p_f_query_result)
             filmwork_ids.update(filmwork_person_ids)
 
+        # work with genres
         genres_query = query_generator.generate_genre_query()
         prepared_genres_query = SQL(genres_query).format(table=Identifier(schema, table))
 
@@ -59,17 +61,17 @@ class Extractor(object):
             filmwork_person_ids = self._extract_record_ids(g_f_query_result)
             filmwork_ids.update(filmwork_person_ids)
 
-        if filmwork_ids:
-            filmworks_query = query_generator.generate_filmwork_query(tuple(filmwork_ids))
-            prepared_filmworks_query = SQL(filmworks_query).format(table=Identifier(schema, table))
+        # work with filmworks
+        filmworks_query = query_generator.generate_filmwork_query(tuple(filmwork_ids))
+        prepared_filmworks_query = SQL(filmworks_query).format(table=Identifier(schema, table))
 
-            filmworks_query_result = self.postgres.retry_fetchall(
-                prepared_filmworks_query, modified=updated_at, page_size=page_size,
-            )
+        filmworks_query_result = self.postgres.retry_fetchall(
+            prepared_filmworks_query, modified=updated_at, page_size=page_size,
+        )
 
-            etl_logger.info(f"Count of updated elements is {len(filmworks_query_result)}.")
+        etl_logger.info(f"Count of updated elements is {len(filmworks_query_result)}.")
 
-            self.state.set_state('updated_at', str(datetime.utcnow()))
+        self.state.set_state('updated_at', str(datetime.utcnow()))
 
-            if filmworks_query_result:
-                self.result_handler(filmworks_query_result)
+        if filmworks_query_result:
+            self.result_handler(filmworks_query_result)

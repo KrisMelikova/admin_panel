@@ -1,6 +1,6 @@
 import logging
 
-from etl.configs.etl_config import settings
+from configs.etl_config import settings
 
 if settings.debug.upper() == "TRUE":
     logs_level = logging.DEBUG

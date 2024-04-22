@@ -1,5 +1,4 @@
-import pdb
-from typing import Callable, Any, Optional, List
+from typing import Any, Callable, List, Optional
 
 from psycopg2.extras import RealDictRow
 from pydantic import BaseModel
@@ -25,7 +24,7 @@ class Filmwork(BaseModel):
 
 
 class Transformer:
-    """ Transform data from PostgreSQL DB."""
+    """ Transform data from PostgreSQL DB. """
 
     def __init__(self, result_handler: Callable) -> None:
         """ Transformer class constructor. """
@@ -70,7 +69,7 @@ class Transformer:
                 directors_names.append(person["person_name"])
                 directors.append(Person(
                     id=person["person_id"],
-                    name=person["person_name"]
+                    name=person["person_name"],
                 ))
 
         return directors, directors_names
@@ -86,7 +85,7 @@ class Transformer:
                 actors_names.append(person["person_name"])
                 actors.append(Person(
                     id=person["person_id"],
-                    name=person["person_name"]
+                    name=person["person_name"],
                 ))
 
         return actors, actors_names
@@ -102,7 +101,7 @@ class Transformer:
                 writers_names.append(person["person_name"])
                 writers.append(Person(
                     id=person["person_id"],
-                    name=person["person_name"]
+                    name=person["person_name"],
                 ))
 
         return writers, writers_names

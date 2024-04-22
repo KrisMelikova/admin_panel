@@ -3,38 +3,38 @@ import json
 import os
 from typing import Any, Dict
 
-from etl.configs.etl_config import settings
+from configs.etl_config import settings
 
 
 class BaseStorage(abc.ABC):
-    """ Абстрактное хранилище состояния. """
+    """ Abstract state store. """
 
     @abc.abstractmethod
     def save_state(self, state: Dict[str, Any]) -> None:
-        """ Сохранить состояние в хранилище. """
+        """ Save state to storage. """
 
     @abc.abstractmethod
     def retrieve_state(self) -> Dict[str, Any]:
-        """ Получить состояние из хранилища. """
+        """ Get state from storage. """
 
 
 class JsonFileStorage(BaseStorage):
     """
-    Реализация хранилища, использующего локальный файл.
-    Формат хранения: JSON.
+    Implementation of a repository that uses a local file.
+    Storage format: JSON.
     """
 
     def __init__(self, file_path: str) -> None:
         self.file_path = file_path
 
     def save_state(self, state: Dict[str, Any]) -> None:
-        """ Сохранить состояние в хранилище."""
+        """ Save state to storage. """
 
         with open(self.file_path, 'w') as f:
             json.dump(state, f)
 
     def retrieve_state(self) -> Dict[str, Any]:
-        """ Получить состояние из хранилища. """
+        """ Get state from storage. """
 
         if not os.path.exists(self.file_path):
             os.mknod(settings.storage_file_path)
@@ -48,18 +48,18 @@ class JsonFileStorage(BaseStorage):
 
 
 class State:
-    """ Класс для работы с состояниями. """
+    """ Class for working with states. """
 
     def __init__(self, storage: BaseStorage) -> None:
         self.storage = storage
 
     def set_state(self, key: str, value: Any) -> None:
-        """ Установить состояние для определённого ключа. """
+        """ Set the state for a specific key. """
 
         self.storage.save_state({key: value})
 
     def get_state(self, key: str) -> Any:
-        """ Получить состояние по определённому ключу. """
+        """ Get the state for a specific key.  """
         state = self.storage.retrieve_state()
 
         return state[key] if key in state else None

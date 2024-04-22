@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 
-from etl.configs.logger import etl_logger
+from configs.logger import etl_logger
+from utils import backoff
 
 
 class Loader(object):
@@ -15,11 +16,13 @@ class Loader(object):
         if index_schema and not self.es.indices.exists(index=index):
             self.create_index(index=index, index_schema=index_schema)
 
+    @backoff(start_sleep_time=0.3)
     def create_index(self, index: str, index_schema: dict) -> None:
         """ Creates index. """
 
         self.es.indices.create(index=index, body=index_schema)
 
+    @backoff(start_sleep_time=0.3)
     def process(self, movies_data: dict) -> None:
         """ Load data to Elasticsearch. """
 
@@ -29,26 +32,11 @@ class Loader(object):
             {
                 "_index": self.index,
                 "_id": el.id,
-                "_source": el.dict()
+                "_source": el.dict(),
             }
             for el in movies_data
         ]
 
-
         _, errors = helpers.bulk(self.es, actions, stats_only=False)
-
-        res = self.es.search(index="movies", body={
-            'size': 100,
-            'query': {
-                'match_all': {}
-            }
-        })
-
-        #
-        #
-        # data_w_bulk_format = list(map(self.convert_to_bulk_format, movies_data))
-        #
-        # _, errors = helpers.bulk(self.es, data_w_bulk_format, stats_only=False)
-
-        import pdb;
-        pdb.set_trace()
+        if errors:
+            etl_logger.error(f"Error while loading data to ES: {errors}")

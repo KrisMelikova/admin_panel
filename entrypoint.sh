@@ -6,4 +6,10 @@ python manage.py collectstatic --no-input
 python manage.py createsuperuser --noinput || true
 cd -
 
+cd sqlite_to_postgres
+python load_data.py
+cd -
+
+python etl/main.py&
+
 uwsgi --strict --ini uwsgi.ini

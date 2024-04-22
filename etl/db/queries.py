@@ -6,11 +6,6 @@ class QueryGenerator:
     FILMWORK_TABLE = "film_work"
     PERSON_FILM_WORK_TABLE = "person_film_work"
     GENRE_FILM_WORK_TABLE = "genre_film_work"
-
-    BASE_TABLE_FIELDS = ["id", "modified"]
-    GENRE_TABLE_FIELDS = ["id", "modified", "name", "description"]
-    PERSON_TABLE_FIELDS = ["id", "modified", "full_name"]
-
     MODIFIED_FIELD = "modified"
 
     def __init__(self, schema, modified):
@@ -20,16 +15,12 @@ class QueryGenerator:
         self.modified = modified
 
     def generate_persons_query(self):
-        prepared_fields = ', '.join(self.PERSON_TABLE_FIELDS)
-
-        return f'SELECT {prepared_fields} ' \
+        return f'SELECT id ' \
                f'FROM {self.schema}.{self.PERSON_TABLE} ' \
                f'WHERE {self.MODIFIED_FIELD} > \'{self.modified}\';'
 
     def generate_genre_query(self):
-        prepared_fields = ', '.join(self.GENRE_TABLE_FIELDS)
-
-        return f'SELECT {prepared_fields} ' \
+        return f'SELECT id ' \
                f'FROM {self.schema}.{self.GENRE_TABLE} ' \
                f'WHERE {self.MODIFIED_FIELD} > \'{self.modified}\';'
 
