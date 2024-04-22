@@ -1,15 +1,15 @@
-from typing import List
-
 import psycopg2
 import psycopg2.sql
 from psycopg2.extras import RealDictCursor, RealDictRow
 
-from etl.configs.logger import etl_logger
+from configs.logger import etl_logger
+from utils import backoff
 
 
 class PostgresConnection(object):
     """ Postgres connection class. """
 
+    @backoff(start_sleep_time=1)
     def _connect(self) -> None:
         """ Postgres connection  method. """
 
@@ -30,10 +30,11 @@ class PostgresConnection(object):
         self.connection.close()
         etl_logger.info(f"Connection to the database {self.postgres_settings['dbname']} is closed.")
 
+    @backoff(start_sleep_time=0.3)
     def retry_fetchall(self, sql: psycopg2.sql.Composed, **kwargs) -> list[RealDictRow]:
         """ Query executor. """
 
-        etl_logger.info(f"Execution of query.")
+        etl_logger.info("Execution of query.")
 
         with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute(sql, kwargs)

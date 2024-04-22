@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from pydantic import BaseSettings, Field
 
-from etl.es.index_schema import movies
+from es.index_schema import movies
 
 load_dotenv()
 

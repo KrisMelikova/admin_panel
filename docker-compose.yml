@@ -46,3 +46,12 @@ services:
       - service
     ports:
       - "80:80"
+
+  elasticsearch:
+    image: elasticsearch:8.6.2
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "127.0.0.1:9200:9200"
