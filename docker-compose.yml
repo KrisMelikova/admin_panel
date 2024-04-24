@@ -55,3 +55,18 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
       - "127.0.0.1:9200:9200"
+
+  etl:
+    build: etl/
+    image: etl_service
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      service:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+    ports:
+      - "5005:5005"

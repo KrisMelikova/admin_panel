@@ -10,6 +10,4 @@ cd sqlite_to_postgres
 python load_data.py
 cd -
 
-python etl/main.py&
-
 uwsgi --strict --ini uwsgi.ini
