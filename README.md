@@ -46,6 +46,8 @@ source venv/bin/activate
 Установка зависимостей
 ```
 pip3 install -r requirements.txt
+or
+pip3 install -r requirements-dev.txt
 ```
 
 Запуск отладочного сервера:
