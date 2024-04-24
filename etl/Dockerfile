@@ -18,4 +18,4 @@ RUN chown myuser:myuser -R storage/storage.json
 
 USER myuser
 
-ENTRYPOINT ["python3", "main.py"]
+ENTRYPOINT ["sh", "-c", "sleep 10 && python3 main.py"]
