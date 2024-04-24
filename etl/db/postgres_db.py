@@ -24,11 +24,10 @@ class PostgresConnection(object):
         self.postgres_settings = postgres_settings
         self._connect()
 
-    def __del__(self) -> None:
-        """ Close Postgres connection. """
-
-        self.connection.close()
-        etl_logger.info(f"Connection to the database {self.postgres_settings['dbname']} is closed.")
+    # посыл ясен, спасибо :) так как в этой конкретной реализации у меня нет контекстного менеджера для
+    # connection - просто удалила __del__, потому что соединение мне еще будет нужно. в целом мне показалось
+    # что выбрала не самый удачный вариант реализации класса (пока вообще кажется что без класса проще),
+    # надо будет еще покопать эту тему.
 
     @backoff(start_sleep_time=0.3)
     def retry_fetchall(self, sql: psycopg2.sql.Composed, **kwargs) -> list[RealDictRow]:

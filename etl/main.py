@@ -11,7 +11,7 @@ from postgres_to_es.transformer import Transformer
 from storage.state_storage import JsonFileStorage, State
 
 PG_CONNECTION = PostgresConnection(settings.postgres.dict())
-ES_CONNECTION = Elasticsearch(settings.es.connection.host)
+ES_CONNECTION = Elasticsearch(settings.es.connection.host, max_retries=15)
 
 
 def run_data_transfer_from_pg_to_es() -> None:

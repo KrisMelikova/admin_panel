@@ -25,11 +25,9 @@ COPY movies_app/uwsgi/uwsgi.ini uwsgi.ini
 RUN apt update && apt install -y gcc && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 COPY movies_app movies_app
-COPY etl etl
 COPY sqlite_to_postgres sqlite_to_postgres
 COPY entrypoint.sh entrypoint.sh
 
-RUN chown myuser:myuser -R etl/storage/storage.json
 RUN chown myuser:myuser -R sqlite_to_postgres/load_data.py
 RUN chmod +x entrypoint.sh
 
