@@ -1,7 +1,7 @@
 [flake8]
-ignore = A003, VNE003, CCE001, Q000, I004, I001
 max-line-length = 120
 max-complexity = 20
+ignore = A003, VNE003, CCE001, Q000, I004, I001, CCR001
 exclude =
     .env
     venv

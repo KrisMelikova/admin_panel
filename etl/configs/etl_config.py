@@ -1,8 +1,6 @@
 from dotenv import load_dotenv
 from pydantic import BaseSettings, Field
 
-from es.index_schema import movies
-
 load_dotenv()
 
 
@@ -16,8 +14,6 @@ class ElasticsearchSettings(BaseSettings):
     """ Elasticsearch settings. """
 
     connection: ElasticsearchConnection = ElasticsearchConnection()
-    index: str = Field("movies", env="ES_INDEX")
-    index_schema: dict = movies
 
 
 class PostgresSettings(BaseSettings):
@@ -39,6 +35,8 @@ class Settings(BaseSettings):
     delay: int = Field(30, env="ETL_DELAY")
     page_size: int = Field(500, env="ETL_PAGE_SIZE")
     storage_file_path: str = Field("../storage/storage.json", env="ETL_STORAGE_FILE_PATH")
+    entities: list = ["genre", "person", "film_work"]
+    db_schema: str = Field("content", env="DB_SCHEME")
     postgres: PostgresSettings = PostgresSettings()
     es: ElasticsearchSettings = ElasticsearchSettings()
 

@@ -65,11 +65,17 @@ Docker:
 ```
 docker build -t django_api .
 docker run -p 8000:8000 --rm --name django django_api
+docker container prune
 ```
 
-Для отладки c docker compose могут пригодиться:
+Для отладки c docker compose могут пригодиться
 ```
 docker-compose down
 docker-compose build
 docker exec -it <container id> bash
+```
+
+Посмотреть все индексы в Elasticsearch
+```
+http://127.0.0.1:9200/_cat/indices\?v
 ```
