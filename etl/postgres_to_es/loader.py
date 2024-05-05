@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch, helpers
 
 from configs.logger import etl_logger
-from es.index_schema import genres, movies
+from es.index_schema import genres, movies, persons
 from utils import backoff
 
 
@@ -34,6 +34,12 @@ class Loader(object):
 
             index = "genres"
             index_schema = genres
+
+        elif table == "person":
+            etl_logger.info(f"Adding {len(transformed_data)} persons to ES.")
+
+            index = "persons"
+            index_schema = persons
 
         elif table == "film_work":
             etl_logger.info(f"Adding {len(transformed_data)} filmworks to ES.")
