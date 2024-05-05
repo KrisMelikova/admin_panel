@@ -28,22 +28,17 @@ def run_data_transfer_from_pg_to_es() -> None:
 
     etl_logger.info(f"ETL service last 'updated_at' is {updated_at}")
 
-    loader = Loader(
-        es=ES_CONNECTION,
-        index=settings.es.index,
-        index_schema=settings.es.index_schema,
-    )
+    loader = Loader(es=ES_CONNECTION)
+    transformer = Transformer(result_handler=loader.process)
+    extractor = Extractor(postgres=PG_CONNECTION, result_handler=transformer.transform)
 
-    transformer = Transformer(
-        result_handler=loader.process,
-    )
-
-    extractor = Extractor(
-        postgres=PG_CONNECTION,
-        result_handler=transformer.transform_filmworks,
-    )
-
-    extractor.proccess(table="film_work", schema="content", page_size=settings.page_size, updated_at=updated_at)
+    for entity in settings.entities:
+        extractor.proccess(
+            table=entity,
+            schema=settings.db_schema,
+            page_size=settings.page_size,
+            updated_at=updated_at,
+        )
 
 
 if __name__ == "__main__":

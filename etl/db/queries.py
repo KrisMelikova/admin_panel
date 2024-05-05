@@ -20,7 +20,7 @@ class QueryGenerator:
                f'WHERE {self.MODIFIED_FIELD} > \'{self.modified}\';'
 
     def generate_genre_query(self):
-        return f'SELECT id ' \
+        return f'SELECT id, name ' \
                f'FROM {self.schema}.{self.GENRE_TABLE} ' \
                f'WHERE {self.MODIFIED_FIELD} > \'{self.modified}\';'
 
