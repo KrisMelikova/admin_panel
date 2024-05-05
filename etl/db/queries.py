@@ -15,7 +15,7 @@ class QueryGenerator:
         self.modified = modified
 
     def generate_persons_query(self):
-        return f'SELECT id ' \
+        return f'SELECT id, full_name ' \
                f'FROM {self.schema}.{self.PERSON_TABLE} ' \
                f'WHERE {self.MODIFIED_FIELD} > \'{self.modified}\';'
 

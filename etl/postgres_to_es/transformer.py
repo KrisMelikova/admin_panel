@@ -16,6 +16,11 @@ class Person(BaseModel):
     name: str
 
 
+class PersonOriginal(BaseModel):
+    id: str
+    full_name: str
+
+
 class Filmwork(BaseModel):
     id: str
     title: str
@@ -58,6 +63,21 @@ class Transformer:
             etl_logger.info(f"Transformed {len(transformed_genres)} genres.")
 
             transform_result |= {"table": table, "data": transformed_genres}
+            self.result_handler(transform_result)
+
+        elif table == "person":
+            transformed_persons = []
+            for person in query_result:
+                transformed_person = PersonOriginal(
+                    id=person["id"],
+                    full_name=person["full_name"],
+                )
+
+                transformed_persons.append(transformed_person)
+
+            etl_logger.info(f"Transformed {len(transformed_persons)} genres.")
+
+            transform_result |= {"table": table, "data": transformed_persons}
             self.result_handler(transform_result)
 
         elif table == "film_work":

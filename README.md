@@ -79,3 +79,7 @@ docker exec -it <container id> bash
 ```
 http://127.0.0.1:9200/_cat/indices\?v
 ```
+Посмотреть все записи в индексе
+```
+http://localhost:9200/<index>/_search?pretty=true&q=*:*
+```
